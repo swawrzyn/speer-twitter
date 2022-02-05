@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  app:
+    user: user
+    environment:
+      - APP_USER_UID=${APP_USER_UID}
+      - APP_USER_GID=${APP_USER_GID}
+      - BOOTSNAP_CACHE_DIR=/bundle/_bootsnap
+      - RAILS_ENV=development
+      - BUNDLE_PATH=/bundle
+      - SECRET_KEY_BASE=1857de07cff62c9c546cdeaca2bfed928340d1afb84215bb08d85b6155e33165564c288b2d1e583d77576004c68c40cfb46a75c14df214ff6ad43c3e2acf7bc3
+    build:
+      context: .
+      args:
+        CHINA_MIRROR: "true"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/app
+      - bundle_path:/bundle
+    ports:
+      - "3000:3000"
+
+volumes:
+  bundle_path:
