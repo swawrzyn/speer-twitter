@@ -39,6 +39,7 @@ gem "rack-cors"
 gem 'rubocop', require: false
 gem 'pagy'
 gem 'jsonapi-serializer'
+gem 'apipie-rails'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
