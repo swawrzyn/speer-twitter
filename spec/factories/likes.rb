@@ -1,22 +1,22 @@
 # == Schema Information
 #
-# Table name: tweets
+# Table name: likes
 #
 #  id         :integer          not null, primary key
-#  content    :string
 #  user_id    :integer          not null
+#  tweet_id   :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  like_count :integer          default("0")
 #
 # Indexes
 #
-#  index_tweets_on_user_id  (user_id)
+#  index_likes_on_tweet_id  (tweet_id)
+#  index_likes_on_user_id   (user_id)
 #
 
 FactoryBot.define do
-  factory :tweet do
-    content { Faker::Lorem.paragraph(sentence_count: 2) }
+  factory :like do
     user { build(:user) }
+    tweet { build(:tweet) }
   end
 end

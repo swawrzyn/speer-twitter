@@ -6,7 +6,13 @@ Rails.application.routes.draw do
       delete '/auth', to: 'auth#delete'
       post '/auth/register', to: 'auth#register'
 
-      resources :tweet, only: [:index, :show, :create, :update, :destroy]
+      get '/user/me', to: 'user#me'
+      get '/user/tweets', to: 'user#tweets'
+      get '/user/likes', to: 'user#likes'
+
+      resources :tweet, only: %i[index show create update destroy] do
+        put :like, on: :member
+      end
     end
   end
 end

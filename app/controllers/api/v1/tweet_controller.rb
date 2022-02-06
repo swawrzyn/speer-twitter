@@ -1,5 +1,5 @@
 class Api::V1::TweetController < ApplicationController
-  before_action :authenticate_user, only: %i[create update destroy]
+  before_action :authenticate_user, only: %i[create update destroy like]
 
   def_param_group :tweet do
     property :data, Hash do
@@ -39,7 +39,6 @@ class Api::V1::TweetController < ApplicationController
   def show
     @tweet = Tweet.find(params[:id])
 
-
     render json: TweetSerializer.new(@tweet, include: [:user])
   end
 
@@ -50,7 +49,6 @@ class Api::V1::TweetController < ApplicationController
     @tweet = Tweet.new(tweet_params)
 
     @tweet.user = current_user
-
 
     if @tweet.save
       render json: TweetSerializer.new(@tweet, include: [:user]), status: 201
@@ -72,7 +70,6 @@ class Api::V1::TweetController < ApplicationController
     if @tweet.user != current_user
       render json: { message: 'not_authorized' }, status: 401
     else
-
       if @tweet.update(tweet_params)
         render json: TweetSerializer.new(@tweet, include: [:user]), status: 200
       else
@@ -94,7 +91,23 @@ class Api::V1::TweetController < ApplicationController
     if @tweet.user != current_user
       render json: { message: 'not_authorized' }, status: 401
     else
-      head :no_content if @tweet.delete
+      head :no_content if @tweet.destroy
+    end
+  end
+
+  api :PUT, '/v1/tweet/:id/like'
+  description 'Like/unlike a tweet'
+  returns code: 204
+  def like
+    tweet = Tweet.find(params[:id])
+
+    @like = Like.find_or_initialize_by(user: current_user, tweet: tweet)
+
+    if @like.id
+      @like.destroy
+      head :no_content
+    elsif @like.save
+      render json: LikeSerializer.new(@like, include: [:user, :tweet]), status: 200
     end
   end
 

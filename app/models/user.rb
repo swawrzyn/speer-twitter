@@ -18,7 +18,8 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true, length: { minimum: 4, maximum: 16 }
   validate :password_complexity
 
-#   attr_accessor :id, :username
+  has_many :tweets
+  has_many :likes
 
   def password_complexity
     if password.blank? ||

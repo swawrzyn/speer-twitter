@@ -13,13 +13,12 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
       end
 
       it 'returns all tweets' do
-        pp json 
         expect(json['data'].size).to eq(5)
       end
     end
   end
 
-  describe 'GET /api/v1/tweet/{id}' do
+  describe 'GET /api/v1/tweet/:id' do
     context 'tweet exists' do
       let(:tweet) { create(:tweet) }
 
@@ -79,7 +78,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'PATCH /api/v1/tweets/{id}' do
+  describe 'PATCH /api/v1/tweets/:id' do
     let(:tweet_params) { { tweet: { content: 'This is some test content.' } } }
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet, user: user) }
@@ -128,7 +127,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'DELETE /api/v1/tweets/{id}' do
+  describe 'DELETE /api/v1/tweets/:id' do
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet, user: user) }
 
@@ -165,9 +164,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
 
     context 'user not logged in' do
-      before do
-        delete "/api/v1/tweet/#{tweet.id}"
-      end
+      before { delete "/api/v1/tweet/#{tweet.id}" }
 
       it 'returns status code 401' do
         expect(response).to have_http_status(401)
@@ -176,6 +173,56 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
       it 'does not delete record' do
         tweet.reload
         expect(tweet.id).to be_truthy
+      end
+    end
+  end
+
+  describe 'PUT /api/v1/tweets/:id/like' do
+    let(:user) { create(:user) }
+    let(:tweet) { create(:tweet) }
+
+    context 'while logged in, without like already' do
+      before do
+        login(user)
+        put "/api/v1/tweet/#{tweet.id}/like"
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns new like' do
+        like = Like.find_by(user: user, tweet: tweet)
+        expect(json['data']['id']).to eq(like.id.to_s)
+      end
+    end
+
+    context 'while logged in, with like already' do
+      let!(:like) { create(:like, user: user, tweet: tweet)}
+
+      before do
+        login(user)
+        put "/api/v1/tweet/#{tweet.id}/like"
+      end
+
+      it 'returns status code 204' do
+        expect(response).to have_http_status(204)
+      end
+
+      it 'deletes like' do
+        like = Like.find_by(user: user, tweet: tweet)
+
+        expect(like).to eq(nil)
+      end
+    end
+
+    context 'user not logged in' do
+      before do
+        put "/api/v1/tweet/#{tweet.id}/like"
+      end
+
+      it 'returns status code 401' do
+        expect(response).to have_http_status(401)
       end
     end
   end

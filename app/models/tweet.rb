@@ -7,6 +7,7 @@
 #  user_id    :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  like_count :integer          default("0")
 #
 # Indexes
 #
@@ -15,5 +16,7 @@
 
 class Tweet < ApplicationRecord
   belongs_to :user
+  has_many :likes
+
   validates :content, presence: true, length: { maximum: 280 }
 end
