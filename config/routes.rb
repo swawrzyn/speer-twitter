@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
+  apipie
   namespace :api do
     namespace :v1 do
       post '/auth', to: 'auth#create'
-      post '/auth/register', to: 'auth#register'
       delete '/auth', to: 'auth#delete'
+      post '/auth/register', to: 'auth#register'
     end
   end
 end
