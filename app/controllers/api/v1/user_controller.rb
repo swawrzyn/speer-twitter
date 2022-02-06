@@ -2,7 +2,7 @@ class Api::V1::UserController < ApplicationController
   before_action :authenticate_user
 
   api :GET, '/v1/user/me'
-  description "User Information"
+  description 'User Information'
   returns code: 200 do
     property :data, Hash do
       property :id, String
@@ -17,7 +17,7 @@ class Api::V1::UserController < ApplicationController
   end
 
   api :GET, '/v1/user/tweets'
-  description "Get all user tweets"
+  description 'Get all user tweets'
   returns code: 200 do
     property :data, Hash do
       property :id, String
@@ -29,13 +29,16 @@ class Api::V1::UserController < ApplicationController
     end
   end
   def tweets
-    @tweets = Tweet.where(user: current_user)
+    options = {}
+    options[:include] = %i[user retweet_parent]
 
-    render json: TweetSerializer.new(@tweets), status: 200
+    @tweets = Tweet.includes(options[:include]).where(user: current_user)
+
+    render json: TweetSerializer.new(@tweets, options), status: 200
   end
 
   api :GET, '/v1/user/likes'
-  description "Get all user likes"
+  description 'Get all user likes'
   returns code: 200 do
     property :data, Hash do
       property :id, String
@@ -56,8 +59,11 @@ class Api::V1::UserController < ApplicationController
     end
   end
   def likes
-    @likes = Like.where(user: current_user)
+    options = {}
+    options[:include] = %w[user tweet]
 
-    render json: LikeSerializer.new(@likes, include: %i[user tweet])
+    @likes = Like.includes(options[:include]).where(user: current_user)
+
+    render json: LikeSerializer.new(@likes, options)
   end
 end

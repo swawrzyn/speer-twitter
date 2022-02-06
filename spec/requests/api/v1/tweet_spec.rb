@@ -43,7 +43,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'POST /api/v1/tweets' do
+  describe 'POST /api/v1/tweet' do
     let(:tweet_params) { { tweet: { content: 'This is some test content.' } } }
     context 'while logged in' do
       let(:user) { create(:user) }
@@ -78,7 +78,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'PATCH /api/v1/tweets/:id' do
+  describe 'PATCH /api/v1/tweet/:id' do
     let(:tweet_params) { { tweet: { content: 'This is some test content.' } } }
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet, user: user) }
@@ -127,7 +127,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'DELETE /api/v1/tweets/:id' do
+  describe 'DELETE /api/v1/tweet/:id' do
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet, user: user) }
 
@@ -177,7 +177,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'PUT /api/v1/tweets/:id/like' do
+  describe 'PUT /api/v1/tweet/:id/like' do
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet) }
 
@@ -198,7 +198,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
 
     context 'while logged in, with like already' do
-      let!(:like) { create(:like, user: user, tweet: tweet)}
+      let!(:like) { create(:like, user: user, tweet: tweet) }
 
       before do
         login(user)
@@ -217,12 +217,33 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
 
     context 'user not logged in' do
-      before do
-        put "/api/v1/tweet/#{tweet.id}/like"
-      end
+      before { put "/api/v1/tweet/#{tweet.id}/like" }
 
       it 'returns status code 401' do
         expect(response).to have_http_status(401)
+      end
+    end
+  end
+
+  describe 'POST /api/v1/retweet' do
+    let(:user) { create(:user) }
+    let(:tweet) { create(:tweet) }
+    let(:retweet_params) { { tweet: { content: 'Test retweet content.' } } }
+
+    context 'while logged in' do
+      before do
+        login(user)
+        post "/api/v1/tweet/#{tweet.id}/retweet", params: retweet_params
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'returns the new tweet' do
+        retweet = Tweet.find(json['data']['id'])
+
+        expect(retweet).to be_truthy
       end
     end
   end

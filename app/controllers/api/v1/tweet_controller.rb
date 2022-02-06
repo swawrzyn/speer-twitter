@@ -28,18 +28,25 @@ class Api::V1::TweetController < ApplicationController
   description 'Get all tweets'
   returns array_of: :tweet, code: 200, desc: 'All tweets'
   def index
-    @tweets = Tweet.all
+    options = {}
+    options[:include] = [:user, :retweet_parent]
 
-    render json: TweetSerializer.new(@tweets, include: [:user])
+    @tweets = Tweet.includes(options[:include]).all
+
+    render json: TweetSerializer.new(@tweets, options)
   end
 
   api :GET, '/v1/tweet/:id'
   description 'Gets a single tweet'
   returns :tweet, desc: 'A single tweet'
   def show
-    @tweet = Tweet.find(params[:id])
+    options = {}
+    options[:include] = [:user, :retweet_parent]
 
-    render json: TweetSerializer.new(@tweet, include: [:user])
+    @tweet = Tweet.includes(options[:include]).find(params[:id])
+    
+
+    render json: TweetSerializer.new(@tweet, options)
   end
 
   api :POST, '/v1/tweet'
@@ -107,7 +114,32 @@ class Api::V1::TweetController < ApplicationController
       @like.destroy
       head :no_content
     elsif @like.save
-      render json: LikeSerializer.new(@like, include: [:user, :tweet]), status: 200
+      render json: LikeSerializer.new(@like, include: %i[user tweet]),
+             status: 200
+    end
+  end
+
+  api :POST, '/v1/tweet/:id/retweet'
+  description 'Retweet a tweet'
+  returns :tweet, desc: 'The retweet'
+  def retweet
+    tweet = Tweet.find(params[:id])
+
+    @retweet = Tweet.new(tweet_params)
+
+    @retweet.retweet_parent = tweet
+    @retweet.user = current_user
+
+    if @retweet.save
+      render json:
+               TweetSerializer.new(@retweet, include: %i[user retweet_parent]),
+             status: 201
+    else
+      render json: {
+               message: 'validation_failed',
+               errors: @retweet.errors,
+             },
+             status: 422
     end
   end
 

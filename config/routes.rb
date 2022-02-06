@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
       resources :tweet, only: %i[index show create update destroy] do
         put :like, on: :member
+        post :retweet, on: :member
       end
     end
   end

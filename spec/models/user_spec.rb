@@ -62,7 +62,6 @@ RSpec.describe User, type: :model do
       user2 = User.new(username: "abcd", password: "Testing123!")
 
       user2.validate
-      puts "messages:", user.username, user2.username
       expect(user2.errors[:username]).to include("has already been taken")
     end
   end
