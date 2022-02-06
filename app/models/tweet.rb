@@ -10,10 +10,12 @@
 #  like_count        :integer          default("0")
 #  retweet_parent_id :integer
 #  retweet_count     :integer          default("0")
+#  tweet_thread_id   :integer
 #
 # Indexes
 #
 #  index_tweets_on_retweet_parent_id  (retweet_parent_id)
+#  index_tweets_on_tweet_thread_id    (tweet_thread_id)
 #  index_tweets_on_user_id            (user_id)
 #
 
@@ -22,6 +24,10 @@ class Tweet < ApplicationRecord
   has_many :likes
   belongs_to :retweet_parent, class_name: 'Tweet', optional: true
   has_many :retweets, class_name: 'Tweet', foreign_key: 'retweet_parent_id'
+
+  belongs_to :tweet_thread, optional: true
+
+  has_many :sibling_tweets, through: :tweet_thread, source: 'tweets'
 
   validates :content, presence: true, length: { maximum: 280 }
 

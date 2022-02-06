@@ -1,24 +1,41 @@
-# README
+# Speer Twitter Clone Assignment
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup Instructions
 
-Things you may want to cover:
+Required tools:
+-   Docker
+-   Docker Compose
 
-* Ruby version
+### Init
+```
+$ git clone https://github.com/swawrzyn/speer-twitter.git
+$ cd speer-twitter
+$ docker-compose build
+```
 
-* System dependencies
+### Prep DB
+```
+$ docker-compose run --rm app sh -c "rails db:create && rails db:migrate"
+```
 
-* Configuration
+If you would like to seed the db:
+```
+$ docker-compose run --rm app sh -c "rails db:seed" 
+```
 
-* Database creation
+### Run Tests
+```
+$ docker-compose run --rm app rspec
+```
 
-* Database initialization
+### Run Server
+```
+$ docker-compose up
+```
 
-* How to run the test suite
+After docker-compose up, you can access the server from http://localhost:3000 and API documentation at http://localhost:3000/api/docs
 
-* Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
+## Issues?
 
-* ...
+If you have any problems running the code or getting something to work. Please send me an email at swawrzyn (at) gmail.com.

@@ -10,10 +10,12 @@
 #  like_count        :integer          default("0")
 #  retweet_parent_id :integer
 #  retweet_count     :integer          default("0")
+#  tweet_thread_id   :integer
 #
 # Indexes
 #
 #  index_tweets_on_retweet_parent_id  (retweet_parent_id)
+#  index_tweets_on_tweet_thread_id    (tweet_thread_id)
 #  index_tweets_on_user_id            (user_id)
 #
 

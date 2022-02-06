@@ -41,6 +41,21 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
         expect(response).to have_http_status(404)
       end
     end
+
+    context 'returns tweet thread if exists' do
+      let(:user) { create(:user) }
+      let(:tweet_thread) { create(:tweet_thread, user: user) }
+
+      before { get "/api/v1/tweet/#{tweet_thread.tweets.first.id}" }
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns all other tweets' do
+        expect(json['included'].size).to eq(7)
+      end
+    end
   end
 
   describe 'POST /api/v1/tweet' do
@@ -225,7 +240,7 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
     end
   end
 
-  describe 'POST /api/v1/retweet' do
+  describe 'POST /api/v1/tweet/:id/retweet' do
     let(:user) { create(:user) }
     let(:tweet) { create(:tweet) }
     let(:retweet_params) { { tweet: { content: 'Test retweet content.' } } }
@@ -244,6 +259,28 @@ RSpec.describe 'Api::V1::Tweet', type: :request do
         retweet = Tweet.find(json['data']['id'])
 
         expect(retweet).to be_truthy
+      end
+    end
+  end
+
+  describe 'POST /api/v1/tweet/thread' do
+    let(:user) { create(:user) }
+    let(:thread_params) { { thread: { content: %w[abc def ghi jkl] } } }
+
+    context 'while logged in' do
+      before do
+        login(user)
+        post '/api/v1/tweet/thread', params: thread_params
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'returns thread' do
+        thread = TweetThread.find(json['data']['id'])
+        expect(thread).to be_truthy
+        expect(json['included'].size).to eq(5)
       end
     end
   end

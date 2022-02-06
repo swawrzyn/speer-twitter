@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_06_084601) do
+ActiveRecord::Schema.define(version: 2022_02_06_103247) do
 
   create_table "likes", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -21,6 +21,13 @@ ActiveRecord::Schema.define(version: 2022_02_06_084601) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "tweet_threads", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_tweet_threads_on_user_id"
+  end
+
   create_table "tweets", force: :cascade do |t|
     t.string "content"
     t.integer "user_id", null: false
@@ -29,7 +36,9 @@ ActiveRecord::Schema.define(version: 2022_02_06_084601) do
     t.integer "like_count", default: 0
     t.integer "retweet_parent_id"
     t.integer "retweet_count", default: 0
+    t.integer "tweet_thread_id"
     t.index ["retweet_parent_id"], name: "index_tweets_on_retweet_parent_id"
+    t.index ["tweet_thread_id"], name: "index_tweets_on_tweet_thread_id"
     t.index ["user_id"], name: "index_tweets_on_user_id"
   end
 
@@ -43,5 +52,6 @@ ActiveRecord::Schema.define(version: 2022_02_06_084601) do
 
   add_foreign_key "likes", "tweets"
   add_foreign_key "likes", "users"
+  add_foreign_key "tweet_threads", "users"
   add_foreign_key "tweets", "users"
 end

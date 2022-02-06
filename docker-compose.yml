@@ -3,8 +3,6 @@ services:
   app:
     user: user
     environment:
-      - APP_USER_UID=${APP_USER_UID}
-      - APP_USER_GID=${APP_USER_GID}
       - BOOTSNAP_CACHE_DIR=/bundle/_bootsnap
       # - RAILS_ENV=development
       - SECRET_KEY_BASE=1857de07cff62c9c546cdeaca2bfed928340d1afb84215bb08d85b6155e33165564c288b2d1e583d77576004c68c40cfb46a75c14df214ff6ad43c3e2acf7bc3

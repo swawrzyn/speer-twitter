@@ -1,7 +1,31 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
+require 'factory_bot_rails'
+
+puts "Starting seed..."
+
+# Create login user
+if !User.exists?(username: 'testuser')
+  User.create!(username: 'testuser', password: '1Password!')
+end
+puts "Login user created, username: 'testuser', password: '1Password!'"
+
+puts "Creating tweets..."
+# Create tweets
+FactoryBot.create(:tweet)
+
+for i in 0..25
+  sel = [0, 1, 2].sample
+
+  if sel == 1
+    # create tweet
+    FactoryBot.create(:tweet)
+  elsif sel == 2
+    # create retweet
+    retweet_parent = Tweet.find(Tweet.pluck(:id).sample)
+    FactoryBot.create(:tweet, retweet_parent: retweet_parent)
+  else
+    # create thread
+    FactoryBot.create(:tweet_thread)
+  end
+end
+
+puts "Done."

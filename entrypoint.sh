@@ -10,6 +10,6 @@ if [[ $RAILS_ENV == "production" ]]; then
   rake db:exists && rails db:migrate || rails db:setup
   exec "$@"
 else
-  echo "Speer Twitter Rails Backend -- mode: $RAILS_ENV"
+  echo "Speer Twitter Rails Backend"
   exec "$@"
 fi

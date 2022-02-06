@@ -1,7 +1,7 @@
 class Api::V1::UserController < ApplicationController
   before_action :authenticate_user
 
-  api :GET, '/v1/user/me'
+  api :GET, '/v1/user/me', 'Get user information'
   description 'User Information'
   returns code: 200 do
     property :data, Hash do
@@ -16,7 +16,7 @@ class Api::V1::UserController < ApplicationController
     render json: UserSerializer.new(current_user), status: 200
   end
 
-  api :GET, '/v1/user/tweets'
+  api :GET, '/v1/user/tweets', 'Get all user tweets'
   description 'Get all user tweets'
   returns code: 200 do
     property :data, Hash do
@@ -37,7 +37,7 @@ class Api::V1::UserController < ApplicationController
     render json: TweetSerializer.new(@tweets, options), status: 200
   end
 
-  api :GET, '/v1/user/likes'
+  api :GET, '/v1/user/likes', 'Get all user liked tweets'
   description 'Get all user likes'
   returns code: 200 do
     property :data, Hash do

@@ -1,6 +1,6 @@
 class Api::V1::AuthController < ApplicationController
   
-  api :POST, '/v1/auth'
+  api :POST, '/v1/auth', 'User Login'
   description "User Login"
   param :credentials, Hash, required: true do
     param :username, String, required: true
@@ -30,7 +30,7 @@ class Api::V1::AuthController < ApplicationController
     end
   end
 
-  api :DELETE, '/v1/auth'
+  api :DELETE, '/v1/auth', 'User Logout'
   description "User Logout"
   returns code: 204
   def delete
@@ -38,7 +38,7 @@ class Api::V1::AuthController < ApplicationController
     head :no_content
   end
 
-  api :POST, '/v1/auth/register'
+  api :POST, '/v1/auth/register', 'User Registration'
   description "User Registration"
   param :credentials, Hash, required: true do
     param :username, String, required: true
