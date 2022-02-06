@@ -15,7 +15,7 @@
 
 FactoryBot.define do
   factory :tweet do
-    content { "MyString" }
-    user { nil }
+    content { Faker::Lorem.paragraph(sentence_count: 2) }
+    user { build(:user) }
   end
 end
