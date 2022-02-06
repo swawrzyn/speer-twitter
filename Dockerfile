@@ -34,28 +34,23 @@ RUN if [ "$CHINA_MIRROR" = "true" ]; then yarn config set registry https://regis
 WORKDIR /app
 
 COPY --chown=user:user Gemfile /app/Gemfile
-COPY --chown=user:user Gemfile.lock /myapp/Gemfile.lock
-COPY --chown=user:user . /app
-
-RUN mkdir /bundle
-RUN chown -R user:user /bundle
-
-COPY entrypoint.sh /usr/bin/
-
-RUN chmod +x /usr/bin/entrypoint.sh
+COPY --chown=user:user Gemfile.lock /app/Gemfile.lock
 
 RUN gem update --system && \
     gem install bundler -v $BUNDLER_VERSION && \
     bundle install
 
-ENTRYPOINT ["entrypoint.sh"]
+COPY --chown=user:user . /app
 
-ENV PATH="${BUNDLE_BIN}:${PATH}"
+COPY entrypoint.sh /usr/bin/
+
+RUN chmod +x /usr/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
 
 USER user
 
 EXPOSE 3000
-
 
 # Start the main process.
 CMD ["rails", "server", "-b", "0.0.0.0"]
